@@ -30,8 +30,6 @@ skill_cooldown = {
     "技能3": [0, 4]
 }
 
-# 当前关卡
-current_level = 0
 
 # 最大敌人数量
 enemies_num_max = [0]
@@ -52,14 +50,8 @@ def start_game():
     exit_game_bottom_rect.center = (main.size[0] - 100, main.size[1] - 50)
     main.screen.blit(exit_game_bottom, exit_game_bottom_rect)
 
-    # 棋盘
-    chessboard = map.chess_board
-    # 棋盘所带标记
-    # 0 - 普通格子，1- 角色当前位置，2-敌人1标记，3-敌人2 ,4-敌人3 ，5- 技能拾取点，6-障碍物so on
-    chessboard_mark = map.chess_board_mark_list[current_level]
-
     # 绘制棋盘
-    map.drawBoard(chessboard, chessboard_mark)
+    map.drawBoard()
 
     # 游戏主循环
     while True:
@@ -67,6 +59,7 @@ def start_game():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            # 鼠标点击事件
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # 点击返回按钮时返回主界面
                 if exit_game_bottom_rect.collidepoint(event.pos):
@@ -75,21 +68,21 @@ def start_game():
             if event.type == pygame.KEYDOWN:
                 # 棋子移动事件
                 if event.key == pygame.K_LEFT:
-                    player_move(pygame.K_LEFT, chessboard, chessboard_mark)
+                    player_move(pygame.K_LEFT)
                 if event.key == pygame.K_RIGHT:
-                    player_move(pygame.K_RIGHT, chessboard, chessboard_mark)
+                    player_move(pygame.K_RIGHT)
                 if event.key == pygame.K_UP:
-                    player_move(pygame.K_UP, chessboard, chessboard_mark)
+                    player_move(pygame.K_UP)
                 if event.key == pygame.K_DOWN:
-                    player_move(pygame.K_DOWN, chessboard, chessboard_mark)
+                    player_move(pygame.K_DOWN)
                 if event.key == pygame.K_a:
-                    player_move(pygame.K_LEFT, chessboard, chessboard_mark)
+                    player_move(pygame.K_LEFT)
                 if event.key == pygame.K_s:
-                    player_move(pygame.K_DOWN, chessboard, chessboard_mark)
+                    player_move(pygame.K_DOWN)
                 if event.key == pygame.K_d:
-                    player_move(pygame.K_RIGHT, chessboard, chessboard_mark)
+                    player_move(pygame.K_RIGHT)
                 if event.key == pygame.K_w:
-                    player_move(pygame.K_UP, chessboard, chessboard_mark)
+                    player_move(pygame.K_UP)
                 # 技能释放事件
                 if event.key == pygame.K_q:
                     pass
@@ -100,37 +93,57 @@ def start_game():
 
 
 # 角色移动
-def player_move(direction, chessboard, chessboard_mark):
+def player_move(direction):
     # 当玩家按左键时，改变玩家位置
     if direction == pygame.K_LEFT:
+        # 移动到普通地块时
         if map.player_place[0] - 1 >= 0 and \
-                chessboard_mark[map.player_place[0] - 1][map.player_place[1]] == 0:
+                map.chessboard_mark[map.player_place[0] - 1][map.player_place[1]] == map.block_dict.get("普通地块"):
             map.player_place = (map.player_place[0] - 1, map.player_place[1])
             # TODO: move enemies
-            map.drawBoard(chessboard, chessboard_mark)
+            map.drawBoard()
+        # 移动到入口时,切换棋盘
+        elif map.player_place[0] - 1 >= 0 and \
+                map.chessboard_mark[map.player_place[0] - 1][map.player_place[1]] == map.block_dict.get("下层地块"):
+            map.change_chessboard()
+
     # 当玩家按右键时，改变玩家位置
     if direction == pygame.K_RIGHT:
-        if map.player_place[0] + 1 <= len(chessboard) - 1 \
-                and chessboard_mark[map.player_place[0] + 1][map.player_place[1]] == 0:
+        if map.player_place[0] + 1 <= len(map.chess_board) - 1 \
+                and map.chessboard_mark[map.player_place[0] + 1][map.player_place[1]] == map.block_dict.get("普通地块"):
             map.player_place = (map.player_place[0] + 1, map.player_place[1])
             # TODO: move enemies
-            map.drawBoard(chessboard, chessboard_mark)
+            map.drawBoard()
+        # 移动到入口时,切换棋盘
+        elif map.player_place[0] + 1 <= len(map.chess_board) - 1 and \
+                map.chessboard_mark[map.player_place[0] + 1][map.player_place[1]] == map.block_dict.get("下层地块"):
+            map.change_chessboard()
+
     # 当玩家按上键时，改变玩家位置
     if direction == pygame.K_UP:
         if map.player_place[1] - 1 >= 0 and \
-                chessboard_mark[map.player_place[0]][map.player_place[1] - 1] == 0:
+                map.chessboard_mark[map.player_place[0]][map.player_place[1] - 1] == map.block_dict.get("普通地块"):
             map.player_place = (map.player_place[0], map.player_place[1] - 1)
             # TODO: move enemies
-            map.drawBoard(chessboard, chessboard_mark)
+            map.drawBoard()
+        # 移动到入口时,切换棋盘
+        elif map.player_place[1] - 1 >= 0 and \
+                map.chessboard_mark[map.player_place[0]][map.player_place[1] - 1] == map.block_dict.get("下层地块"):
+            map.change_chessboard()
+
     # 当玩家按下键时，改变玩家
     if direction == pygame.K_DOWN:
-        if map.player_place[1] + 1 <= len(chessboard[0]) - 1 \
-                and chessboard_mark[map.player_place[0]][map.player_place[1] + 1] == 0:
+        if map.player_place[1] + 1 <= len(map.chess_board[0]) - 1 \
+                and map.chessboard_mark[map.player_place[0]][map.player_place[1] + 1] == map.block_dict.get("普通地块"):
             map.player_place = (map.player_place[0], map.player_place[1] + 1)
             # TODO: move enemies
-            map.drawBoard(chessboard, chessboard_mark)
+            map.drawBoard()
+        # 移动到入口时,切换棋盘
+        elif map.player_place[1] + 1 <= len(map.chess_board[0]) - 1 and \
+                map.chessboard_mark[map.player_place[0]][map.player_place[1] + 1] == map.block_dict.get("下层地块"):
+            map.change_chessboard()
 
 
 # 敌人移动
-def enemies_move(chessboard, chessboard_mark):
+def enemies_move():
     pass
