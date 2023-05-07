@@ -40,3 +40,4 @@ def show_confirm_dialog():
                     main.screen.blit(pygame.transform.scale(main.surface_bg_image, main.size), main.imageRect)
                     pygame.display.update()
                     return False
+                    pass
