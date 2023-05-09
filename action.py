@@ -1,26 +1,18 @@
 import sys
 import map
 import pygame
+import role
 from pygame import transform, surface
 import importlib
 
 main = importlib.import_module("main")
 
-# 敌人数量
-enemies_num = [(2, 1, 0), (4, 1, 0), (5, 2, 1), (6, 3, 2)]
 
 # 技能字典
 skill_dict = {
     "技能1": "鹰眼",
     "技能2": "龙血强化",
     "技能3": "铁山靠"
-}
-
-# 技能是否解锁
-skill_unlock = {
-    "技能1": False,
-    "技能2": False,
-    "技能3": False
 }
 
 # 技能冷却回合,存储格式为当前冷却回合和技能释放冷却的集合
@@ -97,50 +89,50 @@ def player_move(direction):
     # 当玩家按左键时，改变玩家位置
     if direction == pygame.K_LEFT:
         # 移动到普通地块时
-        if map.player_place[0] - 1 >= 0 and \
-                map.chessboard_mark[map.player_place[0] - 1][map.player_place[1]] == map.block_dict.get("普通地块"):
-            map.player_place = (map.player_place[0] - 1, map.player_place[1])
+        if map.player.place[0] - 1 >= 0 and \
+                map.chessboard_mark[map.player.place[0] - 1][map.player.place[1]] == map.block_dict.get("普通地块"):
+            map.player.place = (map.player.place[0] - 1, map.player.place[1])
             # TODO: move enemies
             map.drawBoard()
         # 移动到入口时,切换棋盘
-        elif map.player_place[0] - 1 >= 0 and \
-                map.chessboard_mark[map.player_place[0] - 1][map.player_place[1]] == map.block_dict.get("下层地块"):
+        elif map.player.place[0] - 1 >= 0 and \
+                map.chessboard_mark[map.player.place[0] - 1][map.player.place[1]] == map.block_dict.get("下层地块"):
             map.change_chessboard()
 
     # 当玩家按右键时，改变玩家位置
     if direction == pygame.K_RIGHT:
-        if map.player_place[0] + 1 <= len(map.chess_board) - 1\
-                and map.chessboard_mark[map.player_place[0] + 1][map.player_place[1]] == map.block_dict.get("普通地块"):
-            map.player_place = (map.player_place[0] + 1, map.player_place[1])
+        if map.player.place[0] + 1 <= len(map.chess_board) - 1\
+                and map.chessboard_mark[map.player.place[0] + 1][map.player.place[1]] == map.block_dict.get("普通地块"):
+            map.player.place = (map.player.place[0] + 1, map.player.place[1])
             # TODO: move enemies
             map.drawBoard()
         # 移动到入口时,切换棋盘
-        elif map.player_place[0] + 1 <= len(map.chess_board) - 1 and \
-                map.chessboard_mark[map.player_place[0] + 1][map.player_place[1]] == map.block_dict.get("下层地块"):
+        elif map.player.place[0] + 1 <= len(map.chess_board) - 1 and \
+                map.chessboard_mark[map.player.place[0] + 1][map.player.place[1]] == map.block_dict.get("下层地块"):
             map.change_chessboard()
 
     # 当玩家按上键时，改变玩家位置
     if direction == pygame.K_UP:
-        if map.player_place[1] - 1 >= 0 and \
-                map.chessboard_mark[map.player_place[0]][map.player_place[1] - 1] == map.block_dict.get("普通地块"):
-            map.player_place = (map.player_place[0], map.player_place[1] - 1)
+        if map.player.place[1] - 1 >= 0 and \
+                map.chessboard_mark[map.player.place[0]][map.player.place[1] - 1] == map.block_dict.get("普通地块"):
+            map.player.place = (map.player.place[0], map.player.place[1] - 1)
             # TODO: move enemies
             map.drawBoard()
         # 移动到入口时,切换棋盘
-        elif map.player_place[1] - 1 >= 0 and \
-                map.chessboard_mark[map.player_place[0]][map.player_place[1] - 1] == map.block_dict.get("下层地块"):
+        elif map.player.place[1] - 1 >= 0 and \
+                map.chessboard_mark[map.player.place[0]][map.player.place[1] - 1] == map.block_dict.get("下层地块"):
             map.change_chessboard()
 
     # 当玩家按下键时，改变玩家
     if direction == pygame.K_DOWN:
-        if map.player_place[1] + 1 <= len(map.chess_board[0]) - 1 \
-                and map.chessboard_mark[map.player_place[0]][map.player_place[1] + 1] == map.block_dict.get("普通地块"):
-            map.player_place = (map.player_place[0], map.player_place[1] + 1)
+        if map.player.place[1] + 1 <= len(map.chess_board[0]) - 1 \
+                and map.chessboard_mark[map.player.place[0]][map.player.place[1] + 1] == map.block_dict.get("普通地块"):
+            map.player.place = (map.player.place[0], map.player.place[1] + 1)
             # TODO: move enemies
             map.drawBoard()
         # 移动到入口时,切换棋盘
-        elif map.player_place[1] + 1 <= len(map.chess_board[0]) - 1 and \
-                map.chessboard_mark[map.player_place[0]][map.player_place[1] + 1] == map.block_dict.get("下层地块"):
+        elif map.player.place[1] + 1 <= len(map.chess_board[0]) - 1 and \
+                map.chessboard_mark[map.player.place[0]][map.player.place[1] + 1] == map.block_dict.get("下层地块"):
             map.change_chessboard()
 
 

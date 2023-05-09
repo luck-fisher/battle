@@ -75,8 +75,9 @@ while True:
     for event in pygame.event.get():
         # 退出事件
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            if save.show_confirm_dialog():
+                pygame.quit()
+                sys.exit()
         # 键盘按压事件
         if event.type == pygame.KEYDOWN:
             pass

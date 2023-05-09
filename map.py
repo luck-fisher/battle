@@ -2,6 +2,20 @@ import pygame
 import role
 import main
 
+
+# 敌人数量
+enemies_num = [(2, 1, 0), (4, 1, 0), (5, 2, 1), (6, 3, 2)]
+
+# 角色出生点
+player_birth = (8, 8)
+
+# 当前关卡
+current_level = 0
+
+# 初始化角色
+player = role.Player(5, 1, 100, 1)
+player.place = player_birth
+
 # 地块字典
 block_dict = {
     "普通地块": 0,
@@ -10,17 +24,6 @@ block_dict = {
     "障碍物": 6
 }
 
-# 角色当前位置
-player_place = (0, 0)
-
-# 敌人当前位置
-enemy_place = [(0, 0, 0)]
-
-# 角色出生点
-player_birth = (8, 8)
-
-# 当前关卡
-current_level = 0
 
 # 棋盘
 chess_board = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
@@ -43,8 +46,6 @@ for i in range(16):
         # 特殊地块额外标记
         if i == 10 and j == 3:
             chess_board1_mark[i][j] = block_dict.get("下层地块")
-        elif (i, j) == player_birth:
-            player_place = (i, j)
 
 # 第二关棋盘的标记
 chess_board2_mark = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
@@ -63,8 +64,6 @@ for i in range(16):
         # 特殊地块额外标记
         if i == 5 and j == 2:
             chess_board2_mark[i][j] = block_dict.get("下层地块")
-        elif (i, j) == player_birth:
-            player_place = (i, j)
 
 # 第三关棋盘的标记
 chess_board3_mark = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
@@ -83,8 +82,6 @@ for i in range(16):
         # 特殊地块额外标记
         if i == 5 and j == 8:
             chess_board3_mark[i][j] = block_dict.get("下层地块")
-        elif (i, j) == player_birth:
-            player_place = (i, j)
 
 # 第四关棋盘的标记
 chess_board4_mark = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
@@ -104,8 +101,6 @@ for i in range(16):
         # 特殊地块额外标记
         if i == 8 and j == 6:
             chess_board4_mark[i][j] = block_dict.get("下层地块")
-        elif (i, j) == player_birth:
-            player_place = (i, j)
 
 # 棋盘标记集合
 chess_board_mark_list = [chess_board1_mark, chess_board2_mark, chess_board3_mark, chess_board4_mark]
@@ -139,7 +134,7 @@ def drawBoard():
             elif chessboard_mark[a] == 4:
                 pass
             # 角色位置
-            if player_place == (a, b):
+            if player.place == (a, b):
                 protagonist_image = pygame.transform.scale(pygame.image.load("image/spare_protagonist2.jpg"), (80, 80))
                 main.screen.blit(protagonist_image, chess_board[a][b])
 
@@ -152,6 +147,6 @@ def change_chessboard():
     global chessboard_mark
     chessboard_mark = chess_board_mark_list[current_level]
     # 角色重置回出生点
-    global player_place
-    player_place = player_birth
+    global player
+    player.place = player_birth
     drawBoard()
