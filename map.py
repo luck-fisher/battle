@@ -1,16 +1,20 @@
 import pygame
-
+import role
 import main
 
 # 地块字典
 block_dict = {
     "普通地块": 0,
     "下层地块": 1,
+    "角色出生点": 2,
     "障碍物": 6
 }
 
 # 角色当前位置
 player_place = (0, 0)
+
+# 敌人当前位置
+enemy_place = [(0, 0, 0)]
 
 # 角色出生点
 player_birth = (8, 8)
@@ -19,7 +23,7 @@ player_birth = (8, 8)
 current_level = 0
 
 # 棋盘
-chess_board = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+chess_board = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
 for i in range(16):
     for j in range(9):
         chess_board[i].append((i * 80, j * 80, 79, 79))
@@ -29,16 +33,16 @@ chess_board1_mark = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [],
 for i in range(16):
     for j in range(9):
         if 5 <= i <= 10 and 3 <= j <= 9:
-            chess_board1_mark[i].append(0)
+            chess_board1_mark[i].append(block_dict.get("普通地块"))
         else:
-            chess_board1_mark[i].append(6)
+            chess_board1_mark[i].append(block_dict.get("障碍物"))
         if (i == 6 and j == 7) or (i == 6 and j == 6) or (i == 6 and j == 5):
             chess_board1_mark[i][j] = 6
         if (i == 8 and j == 5) or (i == 8 and j == 3) or (i == 9 and j == 6):
-            chess_board1_mark[i][j] = 6
+            chess_board1_mark[i][j] = block_dict.get("障碍物")
         # 特殊地块额外标记
         if i == 10 and j == 3:
-            chess_board1_mark[i][j] = 1
+            chess_board1_mark[i][j] = block_dict.get("下层地块")
         elif (i, j) == player_birth:
             player_place = (i, j)
 
@@ -47,18 +51,18 @@ chess_board2_mark = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [],
 for i in range(16):
     for j in range(9):
         if 3 <= i <= 12:
-            chess_board2_mark[i].append(0)
+            chess_board2_mark[i].append(block_dict.get("普通地块"))
         else:
-            chess_board2_mark[i].append(6)
+            chess_board2_mark[i].append(block_dict.get("障碍物"))
         if (i == 3 and j == 3) or (i == 5 and j == 3) or (i == 6 and j == 3):
-            chess_board2_mark[i][j] = 6
+            chess_board2_mark[i][j] = block_dict.get("障碍物")
         if (i == 6 and j == 2) or (i == 6 and j == 1) or (7 <= i <= 10 and j == 1):
-            chess_board2_mark[i][j] = 6
+            chess_board2_mark[i][j] = block_dict.get("障碍物")
         if (i == 6 and 5 <= j <= 7) or (i == 7 and j == 5) or (10 <= i <= 11 and 3 <= j <= 7):
-            chess_board2_mark[i][j] = 6
+            chess_board2_mark[i][j] = block_dict.get("障碍物")
         # 特殊地块额外标记
         if i == 5 and j == 2:
-            chess_board2_mark[i][j] = 1
+            chess_board2_mark[i][j] = block_dict.get("下层地块")
         elif (i, j) == player_birth:
             player_place = (i, j)
 
@@ -67,18 +71,18 @@ chess_board3_mark = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [],
 for i in range(16):
     for j in range(9):
         if 0 <= i <= 2:
-            chess_board3_mark[i].append(6)
+            chess_board3_mark[i].append(block_dict.get("障碍物"))
         else:
-            chess_board3_mark[i].append(0)
+            chess_board3_mark[i].append(block_dict.get("普通地块"))
         if (i == 8 and j == 4) or (i == 9 and j == 5) or (i == 10 and j == 6) or (i == 11 and j == 7) or (
                 3 <= i <= 4 and j == 6) or (6 <= i <= 7 and (0 <= j <= 2 or 4 <= j <= 8)):
-            chess_board3_mark[i][j] = 6
+            chess_board3_mark[i][j] = block_dict.get("障碍物")
         if (9 <= i <= 13 and j == 2) or (i == 13 and 3 <= j <= 7) or (i == 11 and 3 <= j <= 4) or (
                 i == 4 and 2 <= j <= 3):
-            chess_board3_mark[i][j] = 6
+            chess_board3_mark[i][j] = block_dict.get("障碍物")
         # 特殊地块额外标记
         if i == 5 and j == 8:
-            chess_board3_mark[i][j] = 1
+            chess_board3_mark[i][j] = block_dict.get("下层地块")
         elif (i, j) == player_birth:
             player_place = (i, j)
 
@@ -86,20 +90,20 @@ for i in range(16):
 chess_board4_mark = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
 for i in range(16):
     for j in range(9):
-        chess_board4_mark[i].append(0)
+        chess_board4_mark[i].append(block_dict.get("普通地块"))
         if (3 <= i <= 7 and j == 5) or (i == 7 and 6 <= j <= 7) or (8 <= i <= 9 and j == 7) or (i == 9 and 2 <= j <= 7):
-            chess_board4_mark[i][j] = 6
+            chess_board4_mark[i][j] = block_dict.get("障碍物")
         if (i == 0 and j == 8) or (i == 1 and j == 7) or (10 <= i <= 12 and j == 2) or (7 >= i >= 2 == j) or (
                 4 <= i <= 6 and j == 3):
-            chess_board4_mark[i][j] = 6
+            chess_board4_mark[i][j] = block_dict.get("障碍物")
         if (i == 13 and (3 <= j <= 5 or 7 <= j <= 8)) or (i == 11 and 4 <= j <= 8) or (i == 15 and 3 <= j <= 7):
-            chess_board4_mark[i][j] = 6
+            chess_board4_mark[i][j] = block_dict.get("障碍物")
         if (i == 13 and j == 0) or (i == 14 and j == 1) or (i == 1 and j == 3) or (i == 3 and j == 0) or (
                 i == 5 and j == 1) or (i == 7 and j == 0) or (i == 9 and j == 1) or (i == 11 and j == 0):
-            chess_board4_mark[i][j] = 6
+            chess_board4_mark[i][j] = block_dict.get("障碍物")
         # 特殊地块额外标记
         if i == 8 and j == 6:
-            chess_board4_mark[i][j] = 1
+            chess_board4_mark[i][j] = block_dict.get("下层地块")
         elif (i, j) == player_birth:
             player_place = (i, j)
 

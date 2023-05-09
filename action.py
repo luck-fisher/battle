@@ -109,7 +109,7 @@ def player_move(direction):
 
     # 当玩家按右键时，改变玩家位置
     if direction == pygame.K_RIGHT:
-        if map.player_place[0] + 1 <= len(map.chess_board) - 1 \
+        if map.player_place[0] + 1 <= len(map.chess_board) - 1\
                 and map.chessboard_mark[map.player_place[0] + 1][map.player_place[1]] == map.block_dict.get("普通地块"):
             map.player_place = (map.player_place[0] + 1, map.player_place[1])
             # TODO: move enemies
